@@ -12,9 +12,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'luhemekg49*q&w_ufj^jovvfq6pbj)2)j=x_fd=(18%5+hk)lv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','0.0.0.0']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','0.0.0.0','url-shortener-1001.herokuapp.com']
 
 
 # Application definition
