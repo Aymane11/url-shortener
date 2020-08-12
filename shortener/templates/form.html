@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% block content %}
+<div class="container">
+    <form action={% url 'shortener:home' %} method="post" class="form mt-5 w-50 mx-auto" style="width: 200px;">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary ">Submit</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

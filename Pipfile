@@ -1,0 +1,15 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+autopep8 = "*"
+
+[packages]
+django = "*"
+django-debug-toolbar = "*"
+django-bootstrap4 = "*"
+
+[requires]
+python_version = "3.8"
