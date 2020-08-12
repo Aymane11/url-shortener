@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from django.http import Http404  
+from django.http import Http404
 
 
 import re
