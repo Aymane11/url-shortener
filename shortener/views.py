@@ -4,6 +4,9 @@ from .models import ShortURL
 from django.contrib import messages
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+from django.http import Http404  
+
 
 import re
 import string
@@ -17,8 +20,11 @@ def view_404(request, exception):
     return render(request, '404.html')
 
 def thanks(request,slug):
+    short = get_object_or_404(ShortURL, slug=slug)
+    if short.expired:
+        raise Http404
     context = {
-        'slug' : slug,
+        'slug' : short.slug,
     }
     return render(request,'thanks.html',context=context)
 
@@ -43,7 +49,7 @@ def home(request):
                 slug = create_slug()
             else:
                 print("slug = " + slug)
-                regex = re.compile(r'^ [a-zA-Z0-9]+$')
+                regex = re.compile(r'^[a-zA-Z0-9]+$')
                 if re.match(regex, slug) is None:
                     messages.error(request, "Invalid Slug (Letter and numbers only).")
                     return redirect("shortener:home")
@@ -51,7 +57,7 @@ def home(request):
             #Checking if slug already used
             qs = ShortURL.objects.filter(slug=slug)
             if qs.exists():
-                messages.error(request, "Slug already used.")
+                messages.error(request, "Slug already in use.")
                 return redirect("shortener:home")
             else:
                 short = ShortURL.objects.create(
@@ -71,4 +77,8 @@ def home(request):
 
 def redirect_to_website(request,slug):
     short = get_object_or_404(ShortURL, slug=slug)
-    return redirect(short.website)
+    if short.expired :
+        messages.error(request, "Link expired.")
+        return redirect('shortener:home')
+    else:
+        return redirect(short.website)

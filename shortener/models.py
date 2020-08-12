@@ -13,9 +13,11 @@ class ShortURL(models.Model):
     website = models.URLField(blank=True, null=True)
     creation_date = models.DateTimeField(default=timezone.now)
     expiration = models.DateTimeField(default=one_day_later)
+    expired = models.BooleanField(default=False)
 
     def __str__(self):
         if self.expiration < timezone.now():
+            self.expired = True
             return self.website + '(Expired)'
         else:
             return self.website

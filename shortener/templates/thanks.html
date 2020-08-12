@@ -2,6 +2,12 @@
 {% load bootstrap4 %}
 
 {% block content %}
-    <h1>Thanks</h1>
-    <h3>{{ slug }}</h3>
+    <div class="mt-5 w-50 mx-auto text-center" style="width: 200px;">
+        <p class="h3 mb-5">
+            <a href={% url 'shortener:redirect_to_website' slug %} class="text-success">{{request.scheme}}://{{request.get_host}}/{{slug}}</a>
+        </p>
+        <p class="h4 mb-5">
+            <a href={% url 'shortener:home' %} class="text-primary">Create another link</a>
+        </p>
+    </div>
 {% endblock content %}
