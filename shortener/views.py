@@ -51,7 +51,7 @@ def home(request):
                 print("slug = " + slug)
                 regex = re.compile(r'^[a-zA-Z0-9]+$')
                 if re.match(regex, slug) is None:
-                    messages.error(request, "Invalid Slug (Letter and numbers only).")
+                    messages.error(request, "Invalid Slug (Letters and numbers only).")
                     return redirect("shortener:home")
 
             #Checking if slug already used

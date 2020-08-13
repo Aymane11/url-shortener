@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 
 class ShortForm(forms.Form):
     website = forms.URLField(max_length=200, widget=TextInput, required=True)
-    slug = forms.SlugField(label='Slug', required=False, help_text="Optional")
+    slug = forms.SlugField(label='Slug', required=False, help_text="Optional (Letters and numbers only)")
 
     def __init__(self, *args, **kwargs):
         super(ShortForm, self).__init__(*args, **kwargs)
