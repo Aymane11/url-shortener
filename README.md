@@ -32,11 +32,12 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-<a href="https://url-shortener-1001.herokuapp.com/">
-        <img alt="Demo" src="https://i.imgur.com/4ZyccO4.gif" width=60%" style="margin:auto;display: block;">
-</a>
-
+<div align="center">
+  <a href="https://url-shortener-1001.herokuapp.com/">
+          <img alt="Demo" src="https://i.imgur.com/4ZyccO4.gif" width=60%">
+  </a>
+</div>
+                                                                                                              
 This is a URL Shortening website made using Django, where you can customize the slug or let the website create it randomly.
 
 
