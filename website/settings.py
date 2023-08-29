@@ -119,10 +119,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = "/static/"
+STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
 MESSAGE_TAGS = {messages.ERROR: "danger"}
 
-SHORTENER_EXPIRATION_DURATION = datetime.timedelta(seconds=60 * 60 * 24) # 1 day
+SHORTENER_EXPIRATION_DURATION = datetime.timedelta(seconds=60 * 60 * 24)  # 1 day
+
+DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda _request: DEBUG}
