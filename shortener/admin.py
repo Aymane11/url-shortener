@@ -6,7 +6,7 @@ from .models import ShortURL
 
 
 class ShortAdmin(admin.ModelAdmin):
-    list_display = ["website", "slug", "expired", "creation_date", "expiration"]
+    list_display = ["slug", "website", "expired", "creation_date", "expiration"]
     actions = ["expire", "unexpire"]
 
     def expire(self, request, queryset):
