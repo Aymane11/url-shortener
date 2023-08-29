@@ -1,7 +1,7 @@
 from django.db import models
+from django.forms.widgets import TextInput
 from django.utils import timezone
 from django.utils.text import slugify
-from django.forms.widgets import TextInput
 
 
 def one_day_later():
@@ -18,6 +18,6 @@ class ShortURL(models.Model):
     def __str__(self):
         if self.expiration < timezone.now():
             self.expired = True
-            return self.website + '(Expired)'
+            return self.website + "(Expired)"
         else:
             return self.website
