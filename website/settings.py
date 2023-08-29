@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from django.contrib.messages import constants as messages
@@ -123,3 +124,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
 MESSAGE_TAGS = {messages.ERROR: "danger"}
+
+SHORTENER_EXPIRATION_DURATION = datetime.timedelta(seconds=60 * 60 * 24) # 1 day
