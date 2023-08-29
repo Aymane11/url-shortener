@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -8,19 +7,24 @@ from .models import ShortURL
 from .utils import create_random_slug, is_expired, is_slug_available
 
 
-
 def view_404(request, exception):
     return render(request, "404.html")
 
 
 def thanks(request, slug):
+    print(slug)
     short = get_object_or_404(ShortURL, slug=slug)
-    if short.expired:
+    if is_expired(short):
         raise Http404
-    context = {
-        "slug": short.slug,
-    }
-    return render(request, "thanks.html", context=context)
+    return render(
+        request,
+        "thanks.html",
+        context={
+            "slug": short.slug,
+            "website": short.website,
+            "expiration": short.expiration,
+        },
+    )
 
 
 def home(request):
@@ -35,6 +39,7 @@ def home(request):
                 slug = create_random_slug()
             if not is_slug_available(slug):
                 form.add_error("slug", "Slug already in use.")
+                messages.error(request, "Slug already in use.")
                 return render(request, "form.html", {"form": form})
 
             # Create short URL
@@ -44,7 +49,6 @@ def home(request):
             return redirect("shortener:thanks", slug=slug)
         else:
             # Render form with errors
-            messages.error(request, "Invalid form.")
             return render(request, "form.html", {"form": form})
 
     else:

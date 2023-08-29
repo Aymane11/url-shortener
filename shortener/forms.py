@@ -14,6 +14,7 @@ class ShortForm(forms.Form):
     slug = forms.CharField(
         label="Slug",
         required=False,
+        widget=TextInput,
         help_text="Optional (Letters and numbers only)",
         validators=[validate_slug],
     )
