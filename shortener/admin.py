@@ -12,16 +12,20 @@ class ShortAdmin(admin.ModelAdmin):
     def expire(self, request, queryset):
         for link in queryset:
             link.expired = True
-        link.save()
+            link.save()
 
-    expire.short_description = "Expire all links"
+    expire.short_description = "Expire selected"
 
     def unexpire(self, request, queryset):
         for link in queryset:
             link.expired = False
-        link.save()
+            link.save()
 
-    unexpire.short_description = "Unexpire all links"
+    unexpire.short_description = "Unexpire selected"
+
+    def has_delete_permission(self, request, obj=None):
+        # Disable delete
+        return False
 
 
 admin.site.register(ShortURL, ShortAdmin)
