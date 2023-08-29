@@ -3,8 +3,12 @@
 
 {% block content %}
     <div class="mt-5 w-50 mx-auto text-center" style="width: 200px;">
-        <p class="h3 mb-5">
-            <a href={% url 'shortener:redirect_to_website' slug %} class="text-success">{{request.scheme}}://{{request.get_host}}/{{slug}}</a>
+        <p class="mb-5">
+            <a href={% url 'shortener:redirect_to_website' slug %} class="h3 text-success">{{request.scheme}}://{{request.get_host}}/{{slug}}</a>
+            <br><br><br>
+            Will redirect to: <a href={{website}} class="text-primary">{{website}}</a>
+            <br>
+            And will expire on: <span class="font-weight-bolder">{{expiration}}</span>
         </p>
         <p class="h4 mb-5">
             <a href={% url 'shortener:home' %} class="text-primary">Create another link</a>
