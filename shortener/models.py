@@ -13,3 +13,8 @@ class ShortURL(models.Model):
     expiration = models.DateTimeField(default=expiration_time)
     expired = models.BooleanField(default=False)
 
+    class Meta:
+        get_latest_by = "creation_date"
+        ordering = ["-creation_date"]
+        verbose_name = "Short URL"
+        verbose_name_plural = "Short URLs"
