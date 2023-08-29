@@ -11,15 +11,21 @@ def random_str() -> str:
 
 
 def is_slug_available(slug: str) -> bool:
-    return not ShortURL.objects.filter(slug=slug).exists()
+    # Avaliable if no other active short url has the same slug
+    return not ShortURL.objects.filter(slug=slug, active=True).exists()
 
 
-def create_random_slug() -> str:
+def create_available_random_slug() -> str:
     slug = random_str()
     while not is_slug_available(slug):
         slug = random_str()
     return slug
 
 
-def is_expired(short: ShortURL) -> bool:
-    return short.expired or short.expiration < timezone.now()
+def is_active(short: ShortURL) -> bool:
+    return short.active and timezone.now() < short.expiration
+
+
+def expire(short: ShortURL) -> None:
+    short.active = False
+    short.save()

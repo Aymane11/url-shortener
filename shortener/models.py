@@ -1,17 +1,21 @@
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
-from django.conf import settings
+
 
 def expiration_time():
     return timezone.now() + settings.SHORTENER_EXPIRATION_DURATION
 
 
 class ShortURL(models.Model):
-    slug = models.SlugField(blank=True, null=True, unique=True)
-    website = models.URLField(blank=True, null=True)
+    slug = models.SlugField(blank=False, null=False, unique=False)
+    website = models.URLField(blank=False, null=False)
     creation_date = models.DateTimeField(default=timezone.now)
     expiration = models.DateTimeField(default=expiration_time)
-    expired = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.slug} -> {self.website}, active: {self.active}"
 
     class Meta:
         get_latest_by = "creation_date"

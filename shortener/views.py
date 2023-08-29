@@ -1,10 +1,12 @@
 from django.contrib import messages
 from django.http import Http404
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
+from django.utils import timezone
 
 from .forms import ShortForm
 from .models import ShortURL
-from .utils import create_random_slug, is_expired, is_slug_available
+from .utils import (create_available_random_slug, expire, is_active,
+                    is_slug_available)
 
 
 def view_404(request, exception):
@@ -12,19 +14,21 @@ def view_404(request, exception):
 
 
 def thanks(request, slug):
-    print(slug)
-    short = get_object_or_404(ShortURL, slug=slug)
-    if is_expired(short):
+    try:
+        short = ShortURL.objects.get(
+            slug=slug, active=True, expiration__gt=timezone.now()
+        )
+        return render(
+            request,
+            "thanks.html",
+            context={
+                "slug": short.slug,
+                "website": short.website,
+                "expiration": short.expiration,
+            },
+        )
+    except ShortURL.DoesNotExist:
         raise Http404
-    return render(
-        request,
-        "thanks.html",
-        context={
-            "slug": short.slug,
-            "website": short.website,
-            "expiration": short.expiration,
-        },
-    )
 
 
 def home(request):
@@ -36,7 +40,7 @@ def home(request):
             print(f"Slug = '{slug}'")
             if slug == "":
                 print("Genrating slug")
-                slug = create_random_slug()
+                slug = create_available_random_slug()
             if not is_slug_available(slug):
                 form.add_error("slug", "Slug already in use.")
                 messages.error(request, "Slug already in use.")
@@ -58,11 +62,13 @@ def home(request):
 
 
 def redirect_to_website(request, slug):
-    short = get_object_or_404(ShortURL, slug=slug)
-    if is_expired(short):
-        short.expired = True
-        short.save()
-        messages.error(request, "Link expired.")
-        return redirect("shortener:home")
-    else:
+    try:
+        short = ShortURL.objects.filter(slug=slug).latest()
+    except ShortURL.DoesNotExist:
+        raise Http404
+    if is_active(short):
         return redirect(short.website)
+    else:
+        expire(short)
+        messages.error(request, "This link has expired.")
+        return redirect("shortener:home")
