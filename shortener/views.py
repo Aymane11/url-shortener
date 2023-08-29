@@ -1,19 +1,12 @@
-import random
-import re
-import string
 
 from django.contrib import messages
-from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ShortForm
 from .models import ShortURL
+from .utils import create_random_slug, is_expired, is_slug_available
 
-
-def create_slug():
-    return "".join(random.choices(string.ascii_letters + string.digits, k=5))
 
 
 def view_404(request, exception):
@@ -34,40 +27,25 @@ def home(request):
     if request.method == "POST":
         form = ShortForm(request.POST)
         if form.is_valid():
-            # URL validation
-            website = form.cleaned_data["website"]
-            print("Website = " + website)
-            val = URLValidator()
-            try:
-                val(website)
-            except ValidationError:
-                messages.error(request, "Invalid URL.")
-                return redirect("shortener:home")
-
             # Slug validation
             slug = form.cleaned_data["slug"]
+            print(f"Slug = '{slug}'")
             if slug == "":
                 print("Genrating slug")
-                slug = create_slug()
-            else:
-                print("slug = " + slug)
-                regex = re.compile(r"^[a-zA-Z0-9]+$")
-                if re.match(regex, slug) is None:
-                    messages.error(request, "Invalid Slug (Letters and numbers only).")
-                    return redirect("shortener:home")
+                slug = create_random_slug()
+            if not is_slug_available(slug):
+                form.add_error("slug", "Slug already in use.")
+                return render(request, "form.html", {"form": form})
 
-            # Checking if slug already used
-            qs = ShortURL.objects.filter(slug=slug)
-            if qs.exists():
-                messages.error(request, "Slug already in use.")
-                return redirect("shortener:home")
-            else:
-                short = ShortURL.objects.create(website=website, slug=slug)
-                messages.success(request, "URL Created")
-                return redirect("shortener:thanks", slug=slug)
+            # Create short URL
+            website = form.cleaned_data["website"]
+            ShortURL.objects.create(website=website, slug=slug)
+            messages.success(request, "URL Created")
+            return redirect("shortener:thanks", slug=slug)
         else:
-            messages.error(request, "Error Occured.")
-            return redirect("shortener:home")
+            # Render form with errors
+            messages.error(request, "Invalid form.")
+            return render(request, "form.html", {"form": form})
 
     else:
         form = ShortForm()
@@ -77,7 +55,9 @@ def home(request):
 
 def redirect_to_website(request, slug):
     short = get_object_or_404(ShortURL, slug=slug)
-    if short.expired:
+    if is_expired(short):
+        short.expired = True
+        short.save()
         messages.error(request, "Link expired.")
         return redirect("shortener:home")
     else:
