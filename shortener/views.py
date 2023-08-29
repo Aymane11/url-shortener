@@ -7,7 +7,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
 
 from .forms import ShortForm
 from .models import ShortURL
